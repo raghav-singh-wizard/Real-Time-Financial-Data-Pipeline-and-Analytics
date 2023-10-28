@@ -135,11 +135,141 @@ Name of ADF= 'PROJECT-STOCKMARKET-ADF'
 
 ![ezcv logo](https://github.com/raghav-singh-wizard/Real-Time-Financial-Data-Pipeline-and-Analytics/blob/master/Project_Architectures/ADF_PIPELINE.png)
 
+### LOOKUP ACTIVITY 
+
+The Lookup activity in Azure Data Factory retrieves metadata or control information from diverse sources like Azure Blob Storage, Azure SQL Database, or other databases. This component, integral to data pipelines, allows querying without altering data. It's pivotal for acquiring filenames, table names, or configuration details required for subsequent data processing. With support for SQL or custom queries and parameterization, it seamlessly integrates within the pipeline, ensuring adaptability and flexibility. Used widely in pre-processing scenarios, the Lookup activity serves as a bridge, facilitating the retrieval of necessary information to drive subsequent data transformations within Azure Data Factory
+
+```It requires a source dataset .```
+
+I utilized Azure's Runtime Integration Software to configure my personal computer as a node, facilitating the seamless connection between an on-premises PostgreSQL database and the cloud infrastructure. This integration process establishes a secure and efficient link, enabling data interaction and transfer between the local PostgreSQL system and the Azure cloud environment. By configuring my PC as a node, I ensured a smooth, reliable connection, empowering the exchange of data and operations between the on-premises database and Azure cloud resources. This setup optimizes accessibility and data flow, enhancing the interoperability and functionality of the entire system.
+
+I employed the Lookup activity's query option to retrieve a list of all tables in my database using the SQL query:
+
+```commandline
+SELECT table_name
+FROM information_schema.tables
+WHERE table_schema = 'public';
+```
+With this information, I leveraged the FOR EACH activity, using dynamic content in the pipeline expression builder:
+
+```commandline
+@activity('alltableindatabase').output.value
+```
+
+Next, I executed a Copy Data activity within the FOR EACH activity. To source my data, I established a linked service for my local PostgreSQL database, enabling a connection between my local and cloud environments. I employed dynamic querying:
+
+```commandline
+@if(equals(item().table_name, 'marketdata'), 
+'select * from marketdata ORDER BY curr_time DESC 
+LIMIT 27;', concat('select * from ', item().table_name))
+```
+
+Data was then deposited into an Azure Data Lake Gen2 Bronze container. At this stage, the data remained untransformed, residing in the Azure cloud, ready for further processing and analysis.
+
+## AZURE DATABRICKS
+
+Utilizing Databricks, I performed data transformation, refining and enriching the retrieved information. Azure Data Factory (ADF) orchestrated the process, directing the transformed data into Azure Data Lake Gen2 (ADLGen2). The integrated workflow ensured seamless data movement and storage, facilitating the refined dataset's secure storage within the Data Lake. This collaborative effort between Databricks, ADF, and ADLGen2 enabled efficient transformation and subsequent storage of the processed data, laying a robust foundation for further analytical endeavors and ensuring easy access to the enriched dataset.
+
+##### NOTEBOOK 1: Bronze to Silver Transformation
+##### NOTEBOOK 2: Silver to Gold for Stock Market Project```
+
+```***************************************************```
+### Notebook 1 information with clear and concise documentation:
+
+```python
+
+# Connecting Azure Data Lake with Azure Databricks Using Container Access Keys
+
+spark.conf.set(
+    "fs.azure.account.key.projectstockmarket.dfs.core.windows.net",
+    "JlDD+M5ZrH57oCDR3ttNSjXXOMObtiIxyt0hCa+luIFJeYplj3XhlI3XWfDEjimE/4U10orq5Ttk+AStsfZN6A=="
+)
+
+# Defining Input Path
+input_path = "abfss://bronze@projectstockmarket.dfs.core.windows.net/dile"
+
+# Reading and Transforming Data
+df = spark.read.format("csv") \
+    .option("inferSchema", "true") \
+    .option("header", "true") \
+    .option("delimiter", ",") \
+    .load(input_path)
+
+# NOTEBOOK 1: Bronze to Silver Transformation
+from pyspark.sql.functions import col
+numeric_columns = ['strike', 'pe_open_intrst', 'ce_open_intrst', 'cechoi', 'cepchoi', 'pechoi', 'pepchoi',
+                   'ce_total_trade_vol', 'pe_total_trade_vol', 'ce_buy_qty', 'ce_sell_qty', 'pe_buy_qty', 'pe_sell_qty', 'price']
+
+for column in numeric_columns:
+    df = df.withColumn(column, col(column).cast("double"))
+
+from pyspark.sql.functions import to_date
+from pyspark.sql.types import DateType
+
+# Convert "expirydate" to a date
+df = df.withColumn("expirydate", to_date(df["expirydate"]).cast(DateType()))
+
+# Convert "curr_date" to a date
+df = df.withColumn("curr_date", to_date(df["curr_date"]).cast(DateType()))
+
+# Output Path for Storing the Transformed Data
+output_path = "abfss://silver@projectstockmarket.dfs.core.windows.net/silver_delta_lake"
+
+# Writing the Transformed Data to Delta Lake in the Silver Container
+df.write.format("delta").mode("overwrite").save(output_path)
+```
+
+This optimized version condenses the process and ensures clarity in each step from accessing the data to transforming it and saving it into the designated storage location in the Delta Lake format within the Silver container of Azure Data Lake. 
+
+### Notebook 2 information with clear and concise documentation:
+
+```python
+# Setting Azure Data Lake connection and Input Path
+spark.conf.set(
+    "fs.azure.account.key.projectstockmarket.dfs.core.windows.net",
+    "JlDD+M5ZrH57oCDR3ttNSjXXOMObtiIxyt0hCa+luIFJeYplj3XhlI3XWfDEjimE/4U10orq5Ttk+AStsfZN6A=="
+)
+
+gold_input_path = "abfss://silver@projectstockmarket.dfs.core.windows.net"
+
+# Reading semi Transformed Data from Silver Layer
+df = spark.read.format("delta").load(gold_input_path)
+
+# NOTEBOOK 2: Silver to Gold Transformation
+
+# Data Formatting: Changing Date and Time Formats
+from pyspark.sql.functions import date_format
+
+date_format_pattern_date = "dd/MM/yyyy"
+date_format_pattern_date_time = "dd/MM/yyyy HH:mm:ss"
+
+df = df.withColumn("expirydate", date_format(df["expirydate"], date_format_pattern_date))
+df = df.withColumn("curr_date", date_format(df["curr_date"], date_format_pattern_date))
+
+df = df.withColumn("curr_time", date_format(df["curr_time"], date_format_pattern_date_time))
+
+# Defining Output Path for Gold Container
+gold_output_path = "abfss://gold@projectstockmarket.dfs.core.windows.net"
+
+# Writing Fully Transformed and Cleaned Data to Gold Delta Lake
+df.write.format("delta").mode("overwrite").save(gold_output_path)
+
+```
+This code efficiently performs the necessary steps, including the Azure Data Lake connection, data reading, formatting, and the final storage of fully transformed and cleaned data in the Gold container using Delta Lake format. 
 
 
+### The data orchestration, loading, and transformation stages are finished. The cleaned and transformed dataset now resides in the Gold Delta Lake container. This refined dataset is well-structured and prepared, facilitating advanced analytics, insightful exploration, and strategic decision-making for the project's next phases. 
 
 
+#### Additionally, our pipeline is fully operational, enabling seamless data transfer from local PostgreSQL to Azure Gold Delta Lake whenever the pipeline is executed. This seamless data flow streamlines the process and ensures the continuous enrichment of the Gold Delta Lake with fresh, local PostgreSQL data upon pipeline activation.
 
+### PIPELINE TRIGGER
+To maintain real-time data integration from the NSE site, I've configured the data retrieval in Python to refresh every 5 minutes, aligning with the site's 3-minute data updates. To ensure continuous and timely data ingestion, I've established an Azure Data Factory pipeline triggered to execute every 6 minutes. This setup guarantees that the pipeline operates at the same frequency as the data refresh on the NSE site, enabling a consistent and up-to-date stream of information for our project's data analysis and processing needs.
 
+## AZURE SYNAPSE ANALYTICS
 
+Azure Synapse Analytics is a comprehensive cloud-based analytics service offering powerful capabilities for data integration, warehousing, and big data analytics. It seamlessly unifies big data and data warehousing to streamline data processing and analysis. With its integration of Apache Spark and SQL, it enables me to process and analyze large volumes of data for actionable insights. Synapse Analytics supports various data types and offers scalable resources, facilitating efficient data exploration, machine learning, and business intelligence. Its unified platform empowers me to derive valuable insights, make data-driven decisions, and optimize my business strategies, serving as a crucial component for comprehensive data management and analytics in my project.
 
+NOW Azure Synapse Analytics features an automatic linked service to Azure Data Lake Gen2, enabling direct data retrieval. For our project, the objective is to house our data within the Azure Synapse Analytics warehouse. To achieve this, I established a linked service to a SQL database supported by Azure Synapse Analytics. Utilizing a serverless endpoint, ```stockmarketdbsynapse-ondemand.sql.azuresynapse.net```, I efficiently loaded the data from Azure Gold Delta Lake to this SQL database within Azure Synapse Analytics using a linked serverless endpoint. This streamlined process facilitates the transfer and consolidation of our data for comprehensive analytics within the Synapse environment.
+
+### The project is successfully concluded with our local PostgreSQL data seamlessly stored in the Azure Synapse Analytics warehouse every 5 minutes upon pipeline execution. This real-time data transfer marks the completion of our primary objective. The consolidated data will now serve as the cornerstone for generating insights and conducting diverse analyses. It enables a wide array of applications and opens avenues for in-depth exploration, empowering us to derive valuable insights and make informed decisions using this data present in our warehouse.
