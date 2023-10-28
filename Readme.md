@@ -160,7 +160,7 @@ Additionally, an Azure Synapse Analytics workspace was allocated to the same res
 ```
 Name of ADF= 'PROJECT-STOCKMARKET-ADF'
 ```
-
+### PIPELINE DIAGRAM 
 ![ezcv logo](https://github.com/raghav-singh-wizard/Real-Time-Financial-Data-Pipeline-and-Analytics/blob/master/Project_Architectures/ADF_PIPELINE.png)
 
 ### LOOKUP ACTIVITY 
