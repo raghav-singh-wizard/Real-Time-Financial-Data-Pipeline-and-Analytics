@@ -283,13 +283,13 @@ gold_output_path = "abfss://gold@projectstockmarket.dfs.core.windows.net"
 df.write.format("delta").mode("overwrite").save(gold_output_path)
 
 ```
-This code efficiently performs the necessary steps, including the Azure Data Lake connection, data reading, formatting, and the final storage of fully transformed and cleaned data in the Gold container using Delta Lake format. 
+ This code efficiently performs the necessary steps, including the Azure Data Lake connection, data reading, formatting, and the final storage of fully transformed and cleaned data in the Gold container using Delta Lake format. 
 
 
-### The data orchestration, loading, and transformation stages are finished. The cleaned and transformed dataset now resides in the Gold Delta Lake container. This refined dataset is well-structured and prepared, facilitating advanced analytics, insightful exploration, and strategic decision-making for the project's next phases. 
+The data orchestration, loading, and transformation stages are finished. The cleaned and transformed dataset now resides in the Gold Delta Lake container. This refined dataset is well-structured and prepared, facilitating advanced analytics, insightful exploration, and strategic decision-making for the project's next phases. 
 
 
-#### Additionally, our pipeline is fully operational, enabling seamless data transfer from local PostgreSQL to Azure Gold Delta Lake whenever the pipeline is executed. This seamless data flow streamlines the process and ensures the continuous enrichment of the Gold Delta Lake with fresh, local PostgreSQL data upon pipeline activation.
+Additionally, our pipeline is fully operational, enabling seamless data transfer from local PostgreSQL to Azure Gold Delta Lake whenever the pipeline is executed. This seamless data flow streamlines the process and ensures the continuous enrichment of the Gold Delta Lake with fresh, local PostgreSQL data upon pipeline activation.
 
 ### PIPELINE TRIGGER
 To maintain real-time data integration from the NSE site, I've configured the data retrieval in Python to refresh every 5 minutes, aligning with the site's 3-minute data updates. To ensure continuous and timely data ingestion, I've established an Azure Data Factory pipeline triggered to execute every 6 minutes. This setup guarantees that the pipeline operates at the same frequency as the data refresh on the NSE site, enabling a consistent and up-to-date stream of information for our project's data analysis and processing needs.
