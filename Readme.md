@@ -49,7 +49,7 @@ The project focuses on leveraging real-time financial data for creating efficien
 
 Understanding and effectively managing this real-time data retrieval process within the realm of data engineering is vital for constructing resilient data processing systems. This project aims to design and implement systems capable of managing the dynamic flow of financial data, offering traders and investors the critical insights necessary for strategic decision-making in India's dynamic financial landscape.
 
-## PYTHON SCRIPT FOR DATA RETRIVAL FROM NSE WEBSITE
+## PYTHON SCRIPT FOR DATA RETRIVAL FROM NSE WEBSITE [](https://github.com/raghav-singh-wizard/Real-Time-Financial-Data-Pipeline-and-Analytics/blob/master/rks_new_oi.py)
 
 Leveraging Python's flexibility and Pandas' robust data handling features, I crafted a proficient data retrieval script. This script systematically obtained real-time financial information from the NSE website, capturing varied data like stock prices, trading volumes, and market indices, particularly focusing on Banknifty for detailed insights.
 
