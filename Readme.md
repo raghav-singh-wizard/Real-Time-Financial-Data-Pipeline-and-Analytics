@@ -2,8 +2,36 @@
 
 ![ezcv logo](https://github.com/raghav-singh-wizard/Real-Time-Financial-Data-Pipeline-and-Analytics/blob/master/Project_Architectures/project_architecture.png)
 
+#### Project Title - Real-Time-Financial-Data-Pipeline-and-Analytics 
+### OVERVIEW
+This project revolves around leveraging data engineering techniques and analytical methodologies to comprehend the Indian stock market dynamics.The primary objective is to capture real-time data from the NSE website and subsequently transferring it to local PostgreSQL and then to the Azure Synapse Analytics warehouse is a key goal of the project. The  harnessed data will enable comprehensive analysis of stock market trends and key financial indicators. This includes leveraging data engineering techniques and analytical methodologies to process, store, and subsequently analyze the collected data.
 
-##  INDIAN STOCK MARKET
+### Goals:
+
+1. **Data Retrieval from NSE:** Acquire real-time financial data encompassing stock prices, options, and market indices, focusing on streamlining its processing.
+2. **Data Management:** Implement efficient data storage structures, ensuring systematic data transformation and cleansing.
+3. **Cloud Migration:** Transfer data from local PostgreSQL to Azure Cloud for real-time updates in the cloud environment.
+4. **Azure Data Orchestration:** Develop Azure Data Factory pipelines designed for orchestrated data movement and transformation.
+5. **Azure Synapse Integration:** Integrate Azure Synapse Analytics for streamlining big data analytics and providing actionable insights.
+6. **Pipeline Automation:** Utilize Azure Data Factory pipelines to trigger regular data retrieval from the NSE site every 5 minutes for automated data collection.
+
+### Challenges:
+
+1. **Real-time Data Extraction:** Capturing live financial data updates every 3 minutes from the NSE site.
+2. **Data Transformation and Structure:** Converting raw financial data into a structured, analyzable format.
+3. **Cloud Data Migration:** Facilitating the seamless transition of data from the local PostgreSQL database to the Azure cloud environment.
+4. **Automation and Pipeline Triggers:** Implementing periodic pipeline executions in alignment with NSE data refresh cycles for continuous data collection.
+
+### Project Flow:
+
+1. **Data Retrieval and Local Storage:** A Python script retrieves financial data from the NSE site and stores it in a local PostgreSQL database.
+2. **Cloud Migration and Orchestration:** Data is migrated from local PostgreSQL to Azure Data Lake Gen2 containers, progressing through Bronze, Silver, and Gold stages for various transformations.
+3. **Azure Data Orchestration:** Azure Data Factory orchestrates the movement and processing of data, ensuring efficient workflows.
+4. **Data Transformation:** Azure Databricks refines and transforms data from Silver to Gold stages, enhancing its quality and structure.
+5. **Pipeline Automation:** Azure Data Factory pipelines are configured to execute every 6 minutes, enabling real-time data retrieval from the NSE site and further processing within Azure Synapse Analytics.
+
+
+### INDIAN STOCK MARKET
 
 The Indian stock market serves as a crucial financial hub, reflecting the country's economic health and providing investment opportunities. It comprises two primary exchanges: the National Stock Exchange (NSE) and the Bombay Stock Exchange (BSE). Both exchanges play a pivotal role in facilitating the buying and selling of stocks, derivatives, and other financial instruments.
 
@@ -273,3 +301,7 @@ Azure Synapse Analytics is a comprehensive cloud-based analytics service offerin
 NOW Azure Synapse Analytics features an automatic linked service to Azure Data Lake Gen2, enabling direct data retrieval. For our project, the objective is to house our data within the Azure Synapse Analytics warehouse. To achieve this, I established a linked service to a SQL database supported by Azure Synapse Analytics. Utilizing a serverless endpoint, ```stockmarketdbsynapse-ondemand.sql.azuresynapse.net```, I efficiently loaded the data from Azure Gold Delta Lake to this SQL database within Azure Synapse Analytics using a linked serverless endpoint. This streamlined process facilitates the transfer and consolidation of our data for comprehensive analytics within the Synapse environment.
 
 ### The project is successfully concluded with our local PostgreSQL data seamlessly stored in the Azure Synapse Analytics warehouse every 5 minutes upon pipeline execution. This real-time data transfer marks the completion of our primary objective. The consolidated data will now serve as the cornerstone for generating insights and conducting diverse analyses. It enables a wide array of applications and opens avenues for in-depth exploration, empowering us to derive valuable insights and make informed decisions using this data present in our warehouse.
+
+# Conclusion:
+
+The Real-Time Financial Data Pipeline and Analytics project culminates in a seamless NSE-to-Azure cloud pipeline. Leveraging Python, Pandas, SQL, Azure services like Data Factory, Databricks, PostgreSQL, and Synapse Analytics, it orchestrates a robust ETL framework for NSE's option chain data. This structured dataset fuels strategic decision-making and yields valuable insights for market participants.
