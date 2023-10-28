@@ -6,14 +6,16 @@ import json
 from datetime import datetime
 import time
 
-# Your configuration for PostgreSQL
+# Your configuration for PostgresSQL
+
+
 pg_config = {
-    'host': 'localhost',
-    'port': '5432',  # Change to your PostgreSQL port
-    'dbName': 'stockmarket_live_data',
-    'dbUser': 'postgres',
-    'dbPassword': 'root'
-}
+    'host': os.getenv('DB_HOST', 'localhost'),
+    'port': os.getenv('DB_PORT', '5432'),
+    'dbName': os.getenv('DB_NAME', 'stockmarket_live_data'),
+    'dbUser': os.getenv('DB_USER'),
+    'dbPassword': os.getenv('DB_PASSWORD')
+    }
 
 table_name = 'marketdata'
 
@@ -31,14 +33,24 @@ headers = {
 }
 
 
-def fetch(index):
+def fetch(index: str) -> str:
+    """
+
+    :param index: nse index name
+    :return: return the data fetched from the webside
+    """
     r_bytes = requests.get('https://www.nseindia.com/api/option-chain-indices?symbol=' + index, headers=headers,
                            verify=True, timeout=(5, 14)).content
     my_json = r_bytes.decode('utf8').replace("'", '"')
     return my_json
 
 
-def get_data(index='BANKNIFTY'):
+def get_data(index: str = 'BANKNIFTY') -> pd.DataFrame:
+    """
+
+    :param index: index of market
+    :return: structured data in pandas dataframe
+    """
     data = fetch(index)
     dfdata = pd.json_normalize(json.loads(data)["records"]["data"])
     dfdata = dfdata.sort_values('expiryDate', ascending=False)
@@ -48,7 +60,12 @@ def get_data(index='BANKNIFTY'):
     return sorted_df
 
 
-def process_data(data):
+def process_data(data: pd.DataFrame) -> pd.DataFrame:
+    """
+
+    :param data: Structured pandas dataframe from the market
+    :return: filters rows based on 4 strike price  above and below the running strike price
+    """
     df = data[['strikePrice', 'expiryDate',
                'PE.openInterest', 'CE.openInterest',
                'CE.changeinOpenInterest', 'CE.pchangeinOpenInterest',
@@ -79,6 +96,11 @@ def process_data(data):
 
 
 def rename_columns(df):
+    """
+
+    :param df: pandas dataframe
+    :return: rename the columns
+    """
     df = df.rename(columns={'PE.openInterest': "PE_Open_intrst",
                             'CE.openInterest': "CE_Open_intrst",
                             'CE.changeinOpenInterest': 'CEchOI',
@@ -98,7 +120,12 @@ def rename_columns(df):
     return df
 
 
-def connect_db(config):
+def connect_db(config: dict) -> [None,any]:
+    """
+
+    :param config: configuration to connect with Database
+    :return: db connection if success else None
+    """
     print("Connecting to PostgreSQL Database")
     conn = None
     try:
@@ -117,6 +144,12 @@ def connect_db(config):
 
 
 def create_table(conn, table_name):
+    """
+
+    :param conn: database connection
+    :param table_name: Name of Table
+    :return: None
+    """
     try:
         with conn.cursor() as conn_cursor:
             conn_cursor.execute(f'DROP TABLE IF EXISTS {table_name}')
@@ -150,10 +183,22 @@ def create_table(conn, table_name):
 
 
 def close_connection(conn):
+    """
+
+    :param conn: db connection
+    :return: closes connection
+    """
     conn.close()
 
 
 def insert_into_db(conn, table_name, data):
+    """
+
+    :param conn: db connection
+    :param table_name: Name of table
+    :param data: Insert pandas dataframe rows into database
+    :return:
+    """
     values = data.to_records(index=False).tolist()
     insert_query = f"INSERT INTO {table_name} (strike, expiryDate, PE_Open_intrst, CE_Open_intrst, \
                     CEchOI, CEpchOI, PEchOI, PEpchOI, CE_total_trade_Vol, PE_total_trade_Vol, CE_Buy_Qty, CE_Sell_Qty, \
