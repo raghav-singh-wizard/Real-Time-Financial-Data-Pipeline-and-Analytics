@@ -210,7 +210,7 @@ Utilizing Databricks, I performed data transformation, refining and enriching th
 
 spark.conf.set(
     "fs.azure.account.key.projectstockmarket.dfs.core.windows.net",
-    "JlDD+M5ZrH57oCDR3ttNSjXXOMObtiIxyt0hCa+luIFJeYplj3XhlI3XWfDEjimE/4U10orq5Ttk+AStsfZN6A=="
+    "JlDD+M5ZLSDAJFO4389RJDFSjXXOMObtiIxyt0hCa+lSFDFSAGSReYplj3XhlI3XWfDEjimE/4U10orq5Ttk+AStsfZN6A=="
 )
 
 # Defining Input Path
@@ -255,7 +255,7 @@ This optimized version condenses the process and ensures clarity in each step fr
 # Setting Azure Data Lake connection and Input Path
 spark.conf.set(
     "fs.azure.account.key.projectstockmarket.dfs.core.windows.net",
-    "JlDD+M5ZrH57oCDR3ttNSjXXOMObtiIxyt0hCa+luIFJeYplj3XhlI3XWfDEjimE/4U10orq5Ttk+AStsfZN6A=="
+    "JlDD+M5ZrH5pdsfogoJER09FKAfdfttNSjXXOMObtiIxyt0hCa+luIFJeYp3LRJASEOojfalj3IJRmE/4U10orq5Ttk+AStsfZN6A=="
 )
 
 gold_input_path = "abfss://silver@projectstockmarket.dfs.core.windows.net"
