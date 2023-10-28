@@ -210,7 +210,7 @@ Utilizing Databricks, I performed data transformation, refining and enriching th
 
 spark.conf.set(
     "fs.azure.account.key.projectstockmarket.dfs.core.windows.net",
-    "JlDD+M5ZLSDAJFO4389RJDFSjXXOMObtiIxyt0hCa+lSFDFSAGSReYplj3XhlI3XWfDEjimE/4U10orq5Ttk+AStsfZN6A=="
+    "YOUR CONTAINER ACCESS KEY"
 )
 
 # Defining Input Path
@@ -255,7 +255,7 @@ This optimized version condenses the process and ensures clarity in each step fr
 # Setting Azure Data Lake connection and Input Path
 spark.conf.set(
     "fs.azure.account.key.projectstockmarket.dfs.core.windows.net",
-    "JlDD+M5ZrH5pdsfogoJER09FKAfdfttNSjXXOMObtiIxyt0hCa+luIFJeYp3LRJASEOojfalj3IJRmE/4U10orq5Ttk+AStsfZN6A=="
+    "YOUR CONTAINER ACCESS KEY"
 )
 
 gold_input_path = "abfss://silver@projectstockmarket.dfs.core.windows.net"
@@ -300,7 +300,7 @@ Azure Synapse Analytics is a comprehensive cloud-based analytics service offerin
 
 NOW Azure Synapse Analytics features an automatic linked service to Azure Data Lake Gen2, enabling direct data retrieval. For our project, the objective is to house our data within the Azure Synapse Analytics warehouse. To achieve this, I established a linked service to a SQL database supported by Azure Synapse Analytics. Utilizing a serverless endpoint, ```stockmarketdbsynapse-ondemand.sql.azuresynapse.net```, I efficiently loaded the data from Azure Gold Delta Lake to this SQL database within Azure Synapse Analytics using a linked serverless endpoint. This streamlined process facilitates the transfer and consolidation of our data for comprehensive analytics within the Synapse environment.
 
-### The project is successfully concluded with our local PostgreSQL data seamlessly stored in the Azure Synapse Analytics warehouse every 5 minutes upon pipeline execution. This real-time data transfer marks the completion of our primary objective. The consolidated data will now serve as the cornerstone for generating insights and conducting diverse analyses. It enables a wide array of applications and opens avenues for in-depth exploration, empowering us to derive valuable insights and make informed decisions using this data present in our warehouse.
+#### The project is successfully concluded with our local PostgreSQL data seamlessly stored in the Azure Synapse Analytics warehouse every 5 minutes upon pipeline execution. This real-time data transfer marks the completion of our primary objective. The consolidated data will now serve as the cornerstone for generating insights and conducting diverse analyses. It enables a wide array of applications and opens avenues for in-depth exploration, empowering us to derive valuable insights and make informed decisions using this data present in our warehouse.
 
 # Conclusion:
 
